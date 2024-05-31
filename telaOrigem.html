@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Screen Capture</title>
+</head>
+<body>
+  <button id="start">Start Capture</button>
+  <script>
+    const socket = new WebSocket('ws://localhost:8080');
+
+    document.getElementById('start').addEventListener('click', async () => {
+      const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+      const mediaRecorder = new MediaRecorder(stream);
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          socket.send(event.data);
+        }
+      };
+
+      mediaRecorder.start(100); // Send data every 100ms
+    });
+  </script>
+</body>
+</html>
